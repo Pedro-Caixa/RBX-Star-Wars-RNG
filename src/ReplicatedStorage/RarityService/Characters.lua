@@ -1,5 +1,5 @@
 local Module = {
-    ["Common"] = {"Luke", "Jake", "John"},
+    ["Common"] = {"Clone Cadet", "Leia Organa", "Luke Skywalker"},
     ["Uncommon"] = {"Nice Guy", "AAA", "Joadadhn"}
 }
 
