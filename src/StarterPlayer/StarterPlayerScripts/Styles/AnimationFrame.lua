@@ -37,29 +37,95 @@ function AnimFrame:RandomizeCharacters()
     local characterNames = randomFolder:GetChildren()
     local randomCharacter = characterNames[math.random(1, #characterNames)]
 
+    SoundLibrary.RandoClick:Play()
+
     self.CharacterLabel.Text = randomCharacter.Name
     self.RarityLabel.Text = randomFolder.Name
     self.RarityLabel.TextColor3 = randomFolder:GetAttribute("Color")
     self.ViewPortFrame.LightColor = Color3.fromRGB(0 ,0, 0)
     self.ViewPortFrame.Ambient = Color3.fromRGB(0 ,0, 0)
-
     RemoteManager:Get('RemoteFunction', "UseCharacterNPC")(self.ViewPortFrame.FunCharacter, randomCharacter)
 end
 
-function AnimFrame:GetReal()
+function AnimFrame:RandomizeCharacterFromRarity(rarity)
+    local FolderToUse = nil
 
+    for _, folder in ipairs(CharacterFolder) do
+        if folder.Name == rarity then
+            FolderToUse = folder
+            break
+        end
+    end
+
+    local characterNames = FolderToUse:GetChildren()
+    local randomCharacter = characterNames[math.random(1, #characterNames)]
+
+    SoundLibrary.RandoClick:Play()
+
+    RemoteManager:Get('RemoteFunction', "UseCharacterNPC")(self.ViewPortFrame.FunCharacter, randomCharacter)
+
+    self.CharacterLabel.Text = randomCharacter.Name
+    self.RarityLabel.Text = FolderToUse.Name
+    self.RarityLabel.TextColor3 = FolderToUse:GetAttribute("Color")
+    self.ViewPortFrame.LightColor = Color3.fromRGB(0 ,0, 0)
+    self.ViewPortFrame.Ambient = Color3.fromRGB(0 ,0, 0)
+    RemoteManager:Get('RemoteFunction', "UseCharacterNPC")(self.ViewPortFrame.FunCharacter, randomCharacter)
+end
+
+
+function AnimFrame:GetReal()    
+    local FolderToUse = nil
+    local character_use = nil
 
     self.CharacterLabel.Text = self.ChoosenCharacter
     self.RarityLabel.Text =  self.CharacterRarity
-    self.RarityLabel.TextColor3 = CharacterFolder[self.CharacterRarity]:GetAttribute("Color")
-    self.ViewPortFrame.LightColor = randomFolder:GetAttribute("Color")
+
+    for _, folder in ipairs(CharacterFolder) do
+        if folder.Name == self.CharacterRarity then
+            FolderToUse = folder
+            break
+        end
+    end
+
+    for _, character in ipairs(FolderToUse:GetChildren()) do
+        if character.Name == self.ChoosenCharacter then
+            character_use = character
+            break
+        end
+    end
+
+    self.RarityLabel.TextColor3 = FolderToUse:GetAttribute("Color")
+    self.ViewPortFrame.Ambient = Color3.fromRGB(255, 255, 255)
+    self.ViewPortFrame.LightColor = FolderToUse:GetAttribute("Color")
+    RemoteManager:Get('RemoteFunction', "UseCharacterNPC")(self.ViewPortFrame.FunCharacter, character_use)
+
 end
 
 function AnimFrame:Start()
-    while true do
-        self:RandomizeCharacters()
-        wait(0.1) 
-    end
+    local continueRandomizing = true
+
+    coroutine.wrap(function()
+        while continueRandomizing do
+            self:RandomizeCharacters()
+            wait(0.1)
+        end
+    end)()
+
+    wait(4) 
+
+    continueRandomizing = false  
+
+    coroutine.wrap(function()
+        local endTime = tick() + 2 
+        while tick() < endTime do
+            self:RandomizeCharacterFromRarity(self.CharacterRarity)
+            wait(0.1)
+        end
+    end)()
+
+    wait(2) 
+
+    self:GetReal() 
 end
 
 return AnimFrame
