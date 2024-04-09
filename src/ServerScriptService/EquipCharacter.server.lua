@@ -19,6 +19,10 @@ RemoteManager:Get('RemoteFunction', "UseCharacter"):Connect(function(Player, mor
     end
 end)
 
+RemoteManager:Get('RemoteFunction', "UseCharacterNPC"):Connect(function(Player, Character, Morph)
+    MorphCharacter(Character, Morph)
+end)
+
 RemoteManager:Get('RemoteFunction', "Unequip"):Connect(function(Player)
     for _, folder in ipairs(CharacterFolder) do
         local morphModel = folder:FindFirstChild('Own Character')
