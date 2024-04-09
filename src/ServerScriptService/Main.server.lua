@@ -3,9 +3,10 @@ local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local Players = game:GetService("Players")
 
 local RemoteManager = require(ReplicatedFirst.Modules.RemoteManager.init)
-local ProfileService =  require(ReplicatedFirst.Modules.ProfileService)
+local ProfileService =  require(ReplicatedStorage.Packages.profileservice)
 local Rarities = require(ReplicatedStorage.Source.RarityService.Rarities)
 local Characters = require(ReplicatedStorage.Source.RarityService.Characters)
+local OverheadUI = require(ReplicatedFirst.Modules.OverheadUI)
 
 local RarityService = require(ReplicatedStorage.Source.RarityService.MainRarity)
 
@@ -24,7 +25,8 @@ local ProfileStore = ProfileService.GetProfileStore(
 local Profiles = {}
 
 local function PlayerAdded(player)
-    local profile = ProfileStore:LoadProfileAsync("Player_" .. player.UserId)
+    OverheadUI.CharacterLoaded(player, nil)
+    local profile = ProfileStore:LoadProfileAsync("Dev3_Player_" .. player.UserId)
     if profile ~= nil then
         profile:AddUserId(player.UserId) 
         profile:Reconcile() 
@@ -71,28 +73,34 @@ end
 local function GiveItem(player, item)
     local profile = Profiles[player]
   
-    profile.Data.Items = profile.Data.Items or {}  
+    profile.Data.Items = profile.Data.Items or {}
   
     for itemName, itemCount in pairs(profile.Data.Items) do
       if itemName == item then
-        profile.Data.Items[itemName] = itemCount + 1  
+        profile.Data.Items[itemName] = itemCount + 1 
         return  
       end
     end
-  
-    profile.Data.Items[#profile.Data.Items + 1] = item
     profile.Data.Items[item] = 1 
-    print(profile.Data.Items)
   end
+
 
   local function ResetPlayerData(player)
     local profile = Profiles[player]
-    print(profile)
     if profile then
-        ProfileStore:WipeProfileAsync("Player_" .. player.UserId)
+        ProfileStore:WipeProfileAsync("Dev3_Player_" .. player.UserId)
     end
   end
 
+  local function GetInventoryData(player)
+    local profile = Profiles[player]    
+    if profile then
+      return profile.Data.Items or {}  
+    else
+      return {}  
+    end
+  end
+  
 ------------------------
 -- RNG
 ------------------------
@@ -103,6 +111,12 @@ end
 RemoteManager:Get('RemoteFunction', "StartRNG"):Connect(function(Player, Luck)
     local index = RarityService.chooseIndex(Rarities, Luck)
     local item = selectRandomItem(Characters[index])
-    ResetPlayerData(Player)
+    GiveItem(Player, item)
+    GiveRolls(Player, 1)
     return item, index
+end)
+
+RemoteManager:Get('RemoteFunction', "GetInventoryData"):Connect(function(Player)
+    local items = GetInventoryData(Player)
+    return items
 end)

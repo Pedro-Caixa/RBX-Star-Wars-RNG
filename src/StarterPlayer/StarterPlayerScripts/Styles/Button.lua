@@ -31,8 +31,16 @@ function Button:Construct()
 	if background and isAnImage then
 		self._background = background
 	end
+    self.TypeChangedConnection = self.Instance:GetAttributeChangedSignal("Type"):Connect(function()
+        self:UpdateAppearance()
+    end)
 
     self.Text = self._mover.TextLabel
+    self.isHovering = false
+end
+
+function Button:UpdateAppearance()
+    self.Type = self.Instance:GetAttribute("Type") or "Normal"
 
     if self.Type == "Confirm" then
         self.Color.Color = ColorSequence.new({
@@ -40,21 +48,26 @@ function Button:Construct()
             ColorSequenceKeypoint.new(1, Color3.fromRGB(247, 247, 247)),
           })
         self.Text.TextColor3 = Color3.fromRGB(0, 70, 11)
-    elseif self.Type == "Cancel" then
+    elseif self.Type == "Unequip" then
         self.Color.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 66, 66)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(253, 176, 176)),
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 27, 27)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 27, 27)),
           })
-        self.Text.TextColor3 = Color3.fromRGB(70, 0, 0)
+        self.Text.TextColor3 = Color3.fromRGB(255, 255, 255)
+        self.Text.Text = "Unequip"
     elseif self.Type == "Regular" then
         self.Color.Color = ColorSequence.new({
             ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
             ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0)),
           })
         self.Text.TextColor3 = Color3.fromRGB(255, 255, 255)
+    elseif self.Type == "BlueRegular" then
+        self.Color.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 140, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 140, 255)),
+        })
+        self.Text.TextColor3 = Color3.fromRGB(255, 255, 255)
     end
-
-    self.isHovering = false
 end
 
 function Button:AddToV(addNumber: number)
@@ -85,6 +98,7 @@ end
 
 
 function Button:Start()
+    self:UpdateAppearance()
     self.Instance.MouseEnter:Connect(function()
         if self.Sound then
         Gui.Sounds.Hover:Play()

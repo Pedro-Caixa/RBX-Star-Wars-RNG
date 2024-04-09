@@ -6,6 +6,7 @@ local module = {
 	["Legendary"] = {1, 1460},
 	["Mythic"] = {1, 9764},
 	["Crazy"] = {1, 37487692724503840937535765},
+	["U don't get this one"] = {1, 248976042670423968423069346093678},
 }
 
 return module

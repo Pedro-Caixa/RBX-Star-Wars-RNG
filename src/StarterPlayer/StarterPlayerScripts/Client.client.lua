@@ -2,7 +2,7 @@ local StarterGui = game:GetService("StarterGui")
 local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
 local StarterPlayerScripts = StarterPlayer:WaitForChild("StarterPlayerScripts")
-
+local Player = Players.LocalPlayer
 local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 
 local UIComponents = StarterPlayerScripts:WaitForChild("Styles")
