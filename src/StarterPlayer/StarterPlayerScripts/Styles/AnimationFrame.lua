@@ -102,30 +102,7 @@ function AnimFrame:GetReal()
 end
 
 function AnimFrame:Start()
-    local continueRandomizing = true
 
-    coroutine.wrap(function()
-        while continueRandomizing do
-            self:RandomizeCharacters()
-            wait(0.1)
-        end
-    end)()
-
-    wait(4) 
-
-    continueRandomizing = false  
-
-    coroutine.wrap(function()
-        local endTime = tick() + 2 
-        while tick() < endTime do
-            self:RandomizeCharacterFromRarity(self.CharacterRarity)
-            wait(0.1)
-        end
-    end)()
-
-    wait(2) 
-
-    self:GetReal() 
 end
 
 return AnimFrame

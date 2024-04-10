@@ -20,6 +20,8 @@ RemoteManager:Get('RemoteFunction', "UseCharacter"):Connect(function(Player, mor
 end)
 
 RemoteManager:Get('RemoteFunction', "UseCharacterNPC"):Connect(function(Player, Character, Morph)
+    print(Character)
+    print(Morph)
     MorphCharacter(Character, Morph)
 end)
 
