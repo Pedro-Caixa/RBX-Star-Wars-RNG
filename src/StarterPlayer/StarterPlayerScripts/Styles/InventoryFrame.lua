@@ -25,11 +25,8 @@ function AnimFrame:Construct()
     self.ViewportCharacter = self.ViewPortFrame.FunCharacter
 end
 
-
-
 function AnimFrame:GetReal()    
     local character_use = nil
-
 
     for _, folder in ipairs(CharacterFolder) do
         for _, character in ipairs(folder:GetChildren()) do
@@ -39,13 +36,12 @@ function AnimFrame:GetReal()
             end
         end
         if character_use then
+            MorphCharacter(self.ViewPortFrame.FunCharacter, character_use)
+
             break
         end
     end
-    if character_use then 
-        print(self.ViewPortFrame.FunCharacter)
-        RemoteManager:Get('RemoteFunction', "UseCharacterNPC")(self.ViewPortFrame.FunCharacter, character_use)
-    end
+
 end
 
 function AnimFrame:Start()

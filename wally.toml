@@ -5,10 +5,12 @@ registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 
 [dependencies]
-cmdr = "evaera/cmdr@1.12.0"
 component = "sleitnick/component@2.4.8"
 topbarplus = "etheroit/topbarplus@1.0.1"
 zoneplus = "mattschrubb/zoneplus@3.2.0"
 timer = "sleitnick/timer@1.1.2"
 input = "sleitnick/input@2.3.0"
 profileservice = "surnautica/profileservice@1.0.0"
+
+[server-dependencies]
+Cmdr = "evaera/cmdr@^1.9.0"

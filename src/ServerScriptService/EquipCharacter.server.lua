@@ -19,10 +19,9 @@ RemoteManager:Get('RemoteFunction', "UseCharacter"):Connect(function(Player, mor
     end
 end)
 
-RemoteManager:Get('RemoteFunction', "UseCharacterNPC"):Connect(function(Player, Character, Morph)
-    print(Character)
-    print(Morph)
-    MorphCharacter(Character, Morph)
+RemoteManager:Get('RemoteFunction', "UseCharacterNPC"):Connect(function(Player, Character_NPC, Morph)
+    print(Character_NPC)
+    MorphCharacter(Character_NPC, Morph)
 end)
 
 RemoteManager:Get('RemoteFunction', "Unequip"):Connect(function(Player)
