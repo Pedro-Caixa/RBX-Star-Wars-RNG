@@ -7,6 +7,8 @@ local OverheadUI = require(ReplicatedFirst.Modules.OverheadUI)
 local RemoteManager = require(ReplicatedFirst.Modules.RemoteManager.init)
 local MorphCharacter = require(ReplicatedFirst.Modules.MorphModule)
 
+local OWN_CHARACTER = ReplicatedStorage.Assets["Idk Guy"]
+
 RemoteManager:Get('RemoteFunction', "UseCharacter"):Connect(function(Player, morph_name)
    for _, folder in ipairs(CharacterFolder) do
         local morphModel = folder:FindFirstChild(morph_name)
@@ -19,17 +21,13 @@ RemoteManager:Get('RemoteFunction', "UseCharacter"):Connect(function(Player, mor
     end
 end)
 
-RemoteManager:Get('RemoteFunction', "UseCharacterNPC"):Connect(function(Player, Character_NPC, Morph)
-    print(Character_NPC)
-    MorphCharacter(Character_NPC, Morph)
+RemoteManager:Get('RemoteFunction', "Unequip"):Connect(function(Player)
+    MorphCharacter(Player.Character, OWN_CHARACTER)
+    OverheadUI.CharacterLoaded(Player, nil)
 end)
 
-RemoteManager:Get('RemoteFunction', "Unequip"):Connect(function(Player)
-    for _, folder in ipairs(CharacterFolder) do
-        local morphModel = folder:FindFirstChild('Own Character')
-        if morphModel then
-            MorphCharacter(Player.Character, morphModel)
-            break
-        end
-    end
+-- NPC
+
+RemoteManager:Get('RemoteFunction', "UseCharacterNPC"):Connect(function(Player, Character_NPC, Morph)
+    MorphCharacter(Character_NPC, Morph)
 end)

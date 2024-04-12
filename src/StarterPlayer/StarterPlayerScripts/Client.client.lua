@@ -7,6 +7,7 @@ local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local Blur = game.Lighting.Blur
 local Camera = workspace.CurrentCamera
+local RunService = game:GetService('RunService')
 
 local RemoteManager = require(ReplicatedFirst.Modules.RemoteManager.init)
 
@@ -37,4 +38,23 @@ RemoteManager:Get('BindableEvent', 'ShowUi'):Connect(function(Player)
 	Blur.Size = 0
 	Camera.FieldOfView = 70
 end)
+
+local coreCall do
+	local MAX_RETRIES = 8
+
+	function coreCall(method, ...)
+		local result = {}
+		for retries = 1, MAX_RETRIES do
+			result = {pcall(StarterGui[method], StarterGui, ...)}
+			if result[1] then
+				break
+			end
+			RunService.Stepped:Wait()
+		end
+		return unpack(result)
+	end
+end
+
+assert(coreCall('SetCore', 'ResetButtonCallback', false))
+
 loadComponents()
