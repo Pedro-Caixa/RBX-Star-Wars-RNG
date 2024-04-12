@@ -14,7 +14,7 @@ local ProfileTemplate = {
     Luck = 0,
     Items = {},
     TimesLogIn = 0,
-    TotalTimeSpent =0,
+    TotalTimeSpent = 0,
 }
 local Profiles = {}
 local Replicas = {}
@@ -45,7 +45,6 @@ function PlayerDataManager:GetPlayerDataReplica(Player: Player)
 				Resolve(Replica)
 			else
 				Reject("Replica did not exist or wasn't active")
-
 			end
 		else
 			Reject("Profile did not exist or wasn't active")
@@ -82,10 +81,37 @@ function PlayerDataManager:GetPlayerProfile(Player: Player)
 	end)
 end
 
+function PlayerDataManager:GiveRolls(Player, Amount) 
+	local Replica = Replicas[Player]
+	Replica:SetValue("TotalRolls",Replica.Data.TotalRolls+Amount) 
+end
+
+function PlayerDataManager:GiveItem(Player, Item) 
+	local Replica = Replicas[Player]
+
+	for itemName, itemCount in pairs(Replica.Data.Items) do
+		if itemName == Item then
+			Replica:ArraySet("Items", itemName, itemCount + 1 ) 
+		  return  
+		end
+	  end
+	  Replica:ArrayInsert("Items", Item, 1)
+end
+
+function PlayerDataManager:GetInvData(Player) 
+	local Replica = Replicas[Player]   
+    if Replica then
+      return Replica.Data.Items or {}  
+    else
+      return {}  
+    end
+
+end
+
 
 local function PlayerAdded(Player: Player)
 	local StartTime = tick()
-	local Profile = ProfileStore:LoadProfileAsync("Player_" .. Player.UserId)
+	local Profile = ProfileStore:LoadProfileAsync("DEV_BUILD_5_Player_" .. Player.UserId)
 
 	if Profile then
 		Profile:AddUserId(Player.UserId)
@@ -109,6 +135,7 @@ local function PlayerAdded(Player: Player)
 
 			Replicas[Player] = Replica
 			warn(Player.Name.. "'s profile has been loaded. ".."("..string.sub(tostring(tick()-StartTime),1,5)..")")
+			warn(Replica.Data.Items)
 		else
 			Profile:Release()
 		end
@@ -128,15 +155,5 @@ Players.PlayerRemoving:Connect(function(Player)
 		Profiles[Player]:Release()
 	end
 end)
-
-function PlayerDataManager:GiveRolls(Player, Amount) 
-	local profile = Profiles[Player]
-
-    if profile.Data.TotalRolls == nil then 
-        profile.Data.TotalRolls = 0
-    end
-    profile.Data.TotalRolls = profile.Data.TotalRolls + Amount
-end
-
 
 return PlayerDataManager

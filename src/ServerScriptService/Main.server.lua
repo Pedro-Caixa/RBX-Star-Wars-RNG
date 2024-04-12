@@ -23,10 +23,11 @@ RemoteManager:Get('RemoteFunction', "StartRNG"):Connect(function(Player, Luck)
     PlayerDataManager:GiveRolls(Player, 1)
     local index = RarityService.chooseIndex(Rarities, Luck)
     local item = selectRandomItem(Characters[index])
+    PlayerDataManager:GiveItem(Player, item)
     return item, index
 end)
 
 RemoteManager:Get('RemoteFunction', "GetInventoryData"):Connect(function(Player)
-    local items = "None"
+    local items = PlayerDataManager:GetInvData(Player)
     return items
 end)

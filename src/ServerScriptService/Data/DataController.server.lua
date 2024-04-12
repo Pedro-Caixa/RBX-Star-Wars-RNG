@@ -21,7 +21,7 @@ function SetupPlayer(Player)
     totalRoll.Name = "⭐ Rolls"
     totalRoll.Value = 0
     totalRoll.Parent = leaderstats
-
+ 
     local totalTimeSpent = Instance.new("StringValue")
     totalTimeSpent.Name = "🕒 Time Spent"
     totalTimeSpent.Value = '00:00:00'
@@ -30,10 +30,10 @@ function SetupPlayer(Player)
 	task.delay(.5, function()
 		--Detect changes on data
 		PlayerDataManager:GetPlayerDataReplica(Player):andThen(function(Replica)		
-			Replica:ListenToChange("⭐ Rolls", function(NewValue, OldValue)
-				print(Player.Name .. "'s Money has been changed on the server: " .. NewValue)
+			Replica:ListenToChange("TotalRolls", function(NewValue, OldValue)
+				print(Player.Name .. "'s Rolls has been changed on the server: " .. NewValue)
 				local checkstat = leaderstats and leaderstats:FindFirstChild("⭐ Rolls")
-				checkstat.Value = NewValue--IMPORTANT
+				checkstat.Value = NewValue --IMPORTANT
 			end)	
 		end)
 
