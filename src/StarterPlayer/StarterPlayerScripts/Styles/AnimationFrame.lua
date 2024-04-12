@@ -115,25 +115,34 @@ function AnimFrame:GetReal()
     MorphCharacter(self.ViewPortFrame.FunCharacter, character_use)
 end
 
-function AnimFrame:Roll() 
+function AnimFrame:Roll(isFastRoll) 
     RemoteManager:Get('BindableEvent', 'HideUi')(LocalPlayer)
-    for _ = 1, 25 do
-        self:RandomizeCharacters()
-        wait(0.1) 
+    if isFastRoll then 
+        for _ = 1, 10 do
+            self:RandomizeCharacters()
+            wait(0.05) 
+        end
+        self:GetReal()
+        wait(2)
+    else
+        for _ = 1, 25 do
+            self:RandomizeCharacters()
+            wait(0.1) 
+        end
+        task.wait(0.1)
+        for _ = 1, 5 do
+            self:RandomizeCharacterFromRarity(self.CharacterRarity)
+            wait(0.5) 
+        end
+        self:GetReal()
+        wait(3)
     end
-    task.wait(0.1)
-    for _ = 1, 5 do
-        self:RandomizeCharacterFromRarity(self.CharacterRarity)
-        wait(0.5) 
-    end
-    self:GetReal()
-    wait(3)
     RemoteManager:Get('BindableEvent', 'ShowUi')(LocalPlayer)
 end
 
 function AnimFrame:Start()
-    RemoteManager:Get('BindableEvent', 'StartRolling'):Connect(function(Player)
-        self:Roll()
+    RemoteManager:Get('BindableEvent', 'StartRolling'):Connect(function(Player, isFastRoll)
+        self:Roll(isFastRoll)
       end)
 end
 
