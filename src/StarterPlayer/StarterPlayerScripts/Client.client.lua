@@ -58,3 +58,9 @@ end
 assert(coreCall('SetCore', 'ResetButtonCallback', false))
 
 loadComponents()
+
+while true do 
+	RemoteManager:Get('RemoteFunction', "UpdateLeaderboard")()
+	RemoteManager:Get("RemoteFunction", "UpdateTimer")()
+	wait(1)
+end

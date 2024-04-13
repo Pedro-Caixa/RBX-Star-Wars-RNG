@@ -86,17 +86,24 @@ function PlayerDataManager:GiveRolls(Player, Amount)
 	Replica:SetValue("TotalRolls",Replica.Data.TotalRolls+Amount) 
 end
 
-function PlayerDataManager:GiveItem(Player, Item) 
+function PlayerDataManager:GiveTime(Player, Amount) 
 	local Replica = Replicas[Player]
-
-	for itemName, itemCount in pairs(Replica.Data.Items) do
-		if itemName == Item then
-			Replica:ArraySet("Items", itemName, itemCount + 1 ) 
-		  return  
-		end
-	  end
-	  Replica:ArrayInsert("Items", Item, 1)
+	Replica:SetValue("TotalTimeSpent",Replica.Data.TotalTimeSpent+Amount)
 end
+
+function PlayerDataManager:GetTime(Player) 
+	local Replica = Replicas[Player]
+	return Replica.Data.TotalTimeSpent or 0
+end
+
+
+function PlayerDataManager:GiveItem(Player, Item)
+	local Replica = Replicas[Player]
+  	local items = Replica.Data.Items or {}
+  	local itemCount = items[Item] or 0
+  	items[Item] = itemCount + 1
+  	Replica.Data.Items = items
+  end
 
 function PlayerDataManager:GetInvData(Player) 
 	local Replica = Replicas[Player]   
@@ -111,7 +118,7 @@ end
 
 local function PlayerAdded(Player: Player)
 	local StartTime = tick()
-	local Profile = ProfileStore:LoadProfileAsync("DEV_BUILD_5_Player_" .. Player.UserId)
+	local Profile = ProfileStore:LoadProfileAsync("DEV_BUILD_9_Player_" .. Player.UserId)
 
 	if Profile then
 		Profile:AddUserId(Player.UserId)
@@ -135,7 +142,6 @@ local function PlayerAdded(Player: Player)
 
 			Replicas[Player] = Replica
 			warn(Player.Name.. "'s profile has been loaded. ".."("..string.sub(tostring(tick()-StartTime),1,5)..")")
-			warn(Replica.Data.Items)
 		else
 			Profile:Release()
 		end

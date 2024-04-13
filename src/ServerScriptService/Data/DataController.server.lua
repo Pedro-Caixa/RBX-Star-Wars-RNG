@@ -12,6 +12,28 @@ local function formatNumberWithCommas(number)
 	return formattedNumber:reverse():gsub("^,", "")
 end
 
+local function formatTime(seconds)
+    local days = math.floor(seconds / 86400)
+    local hours = math.floor((seconds % 86400) / 3600)
+    local minutes = math.floor((seconds % 3600) / 60)
+    local remainingSeconds = seconds % 60
+    
+    local formattedTime = ""
+    if days > 0 then
+        formattedTime = formattedTime .. days .. "d:"
+    end
+    if hours > 0 or days > 0 then
+        formattedTime = formattedTime .. hours .. "h:"
+    end
+    if minutes > 0 or hours > 0 or days > 0 then
+        formattedTime = formattedTime .. minutes .. "m:"
+    end
+    formattedTime = formattedTime .. remainingSeconds .. "s"
+    
+    return formattedTime
+end
+
+
 function SetupPlayer(Player)
     local leaderstats = Instance.new("Folder")
     leaderstats.Name = "leaderstats"
@@ -31,18 +53,20 @@ function SetupPlayer(Player)
 		--Detect changes on data
 		PlayerDataManager:GetPlayerDataReplica(Player):andThen(function(Replica)		
 			Replica:ListenToChange("TotalRolls", function(NewValue, OldValue)
-				print(Player.Name .. "'s Rolls has been changed on the server: " .. NewValue)
 				local checkstat = leaderstats and leaderstats:FindFirstChild("⭐ Rolls")
 				checkstat.Value = NewValue --IMPORTANT
 			end)	
+			Replica:ListenToChange("TotalTimeSpent", function(NewValue, OldValue)
+				local timeStat = leaderstats and leaderstats:FindFirstChild("🕒 Time Spent")
+				timeStat.Value = formatTime(NewValue) --IMPORTANT
+			end)
 		end)
-
 		--Set player data on join game
 		PlayerDataManager:GetPlayerProfile(Player):andThen(function(Profile)
 			totalRoll.Value = Profile.Data.TotalRolls
-			warn(Player.Name .. "'s Data Loaded!")
 		end)
 	end)
+	
 end
 
 Players.PlayerAdded:Connect(function(plr)

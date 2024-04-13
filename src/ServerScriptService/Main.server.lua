@@ -2,6 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local Players = game:GetService("Players")
 local DataStoreService = game:GetService("DataStoreService")
+local LBDataStore = DataStoreService:GetOrderedDataStore("Leaderboard")
+local LBTDataStore = DataStoreService:GetOrderedDataStore("TimeLeaderboard")
 
 local PlayerDataManager = require(game:GetService("ServerScriptService").Data.PlayerDataManager)
 local RemoteManager = require(ReplicatedFirst.Modules.RemoteManager.init)
@@ -30,4 +32,13 @@ end)
 RemoteManager:Get('RemoteFunction', "GetInventoryData"):Connect(function(Player)
     local items = PlayerDataManager:GetInvData(Player)
     return items
+end)
+
+RemoteManager:Get('RemoteFunction', "UpdateLeaderboard"):Connect(function(Player)
+    LBTDataStore:UpdateAsync(Player.UserId,function(oldVal)
+        return tonumber(PlayerDataManager:GetTime(Player))
+    end)
+    LBDataStore:UpdateAsync(Player.UserId,function(oldVal)
+        return tonumber(Player:WaitForChild('leaderstats'):FindFirstChild("⭐ Rolls").Value)--IMPORTANT [UPDATE LEADERBOARD DATA WITH PLAYER FOLDER VALUE]
+    end)
 end)
